@@ -1,6 +1,9 @@
 DDPServer = {};
 
 var Fiber = Npm.require('fibers');
+var events = Npm.require('events');
+
+Meteor.events = new events.EventEmitter();
 
 // This file contains classes:
 // * Session - The server's connection to a single DDP client
@@ -840,6 +843,8 @@ _.extend(Session.prototype, {
       self._universalSubs.push(sub);
 
     sub._runHandler();
+    console.log('emitting subscriptionStarted');
+    Meteor.events.emit('subscriptionStarted', subId, params, name);
   },
 
   // tear down specified subscription
@@ -853,6 +858,7 @@ _.extend(Session.prototype, {
       self._namedSubs[subId]._removeAllDocuments();
       self._namedSubs[subId]._deactivate();
       delete self._namedSubs[subId];
+      Meteor.events.emit('subscriptionStopped', subId, error);
     }
 
     var response = {msg: 'nosub', id: subId};
