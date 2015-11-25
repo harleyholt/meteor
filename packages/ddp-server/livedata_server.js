@@ -461,7 +461,6 @@ _.extend(Session.prototype, {
     if (self.socket) {
       if (Meteor._printSentDDP)
         Meteor._debug("Sent DDP", DDPCommon.stringifyDDP(msg));
-      console.log('livedata_server', 'send', msg);
       self.socket.send(DDPCommon.stringifyDDP(msg));
     }
   },
