@@ -314,6 +314,7 @@ var Session = function (server, version, socket, options) {
 
   Package.facts && Package.facts.Facts.incrementServerFact(
     "livedata", "sessions", 1);
+  Meteor.instrumentation.emit('sessionOpened', self);
 };
 
 _.extend(Session.prototype, {
@@ -436,6 +437,7 @@ _.extend(Session.prototype, {
 
     Package.facts && Package.facts.Facts.incrementServerFact(
       "livedata", "sessions", -1);
+    Meteor.instrumentation.emit('sessionClosed', self);
 
     Meteor.defer(function () {
       // stop callbacks can yield, so we defer this on close.
@@ -461,6 +463,7 @@ _.extend(Session.prototype, {
     if (self.socket) {
       if (Meteor._printSentDDP)
         Meteor._debug("Sent DDP", DDPCommon.stringifyDDP(msg));
+      Meteor.instrumentation.emit('sessionSend', self, msg);
       self.socket.send(DDPCommon.stringifyDDP(msg));
     }
   },
